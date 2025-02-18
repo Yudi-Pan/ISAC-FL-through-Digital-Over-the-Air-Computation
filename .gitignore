@@ -1,0 +1,7 @@
+data/
+Q_list/
+log/
+
+.idea
+*.iml
+*.zip
