@@ -1,7 +1,12 @@
 data/
 Q_list/
 log/
+venv/
+__pycache__/
 
+*.pyc
+*.log
+.env
 .idea
 *.iml
 *.zip
