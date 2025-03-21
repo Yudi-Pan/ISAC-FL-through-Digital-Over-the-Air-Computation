@@ -92,7 +92,19 @@ def main_fed_online_CV(dist, large_scale_fading, beta_3, beta_4):
     dataset_test = MyDataset(txt='./data/spect/THREE_RADAR_3000/' + 'test_m7.txt', transform=data_transform)
     dataset_train = [dataset_train_1, dataset_train_2, dataset_train_3, dataset_train_4, dataset_train_5,
                      dataset_train_6]
+    if args.num_users == 10:
+        dataset_train_7 = MyDataset(txt=root_radar_1 + 'train_1_m7.txt', transform=data_transform)
 
+        dataset_train_8 = MyDataset(txt=root_radar_2 + 'train_1_m7.txt', transform=data_transform)
+
+        dataset_train_9 = MyDataset(txt=root_radar_3 + 'train_1_m7.txt', transform=data_transform)
+
+        dataset_train_10 = MyDataset(txt=root_radar_1 + 'train_2_m7.txt', transform=data_transform)
+
+        # dataset_train_11 = MyDataset(txt=root_radar_2 + 'train_2_m7.txt', transform=data_transform)
+        #
+        # dataset_train_12 = MyDataset(txt=root_radar_3 + 'train_2_m7.txt', transform=data_transform)
+        dataset_train.extend([dataset_train_7, dataset_train_8, dataset_train_9, dataset_train_10])
     img_size = dataset_train_1[0][0].shape
     print(img_size)
 
@@ -169,6 +181,9 @@ def main_fed_online_CV(dist, large_scale_fading, beta_3, beta_4):
         weight_diffs = []
 
         rho = 1 / args.num_users
+        logger.info('number of users: {}'.format(args.num_users))
+        if tmp_round == 299:
+            args.lr = args.lr * 0.1
         for m_device in range(args.num_users):
             local = LocalUpdate(args=args, batch_size=sensing_datasize, dataset=dataset_train[m_device],
                                 datasize=sensing_datasize)

@@ -72,28 +72,36 @@ def main_fed_online_CV(dist, large_scale_fading, beta_3, beta_4):
 
     root_radar_1 = './data/spect/THREE_RADAR_3000/radar_1/'
     dataset_train_1 = MyDataset(txt=root_radar_1 + 'train_1_m7.txt', transform=data_transform)
-    # dataset_test_1 = MyDataset(txt=root_radar_1 + 'test_1.txt', transform=data_transform)
 
     root_radar_2 = './data/spect/THREE_RADAR_3000/radar_2/'
     dataset_train_2 = MyDataset(txt=root_radar_2 + 'train_1_m7.txt', transform=data_transform)
-    # dataset_test_2 = MyDataset(txt=root_radar_2 + 'test_1.txt', transform=data_transform)
 
     root_radar_3 = './data/spect/THREE_RADAR_3000/radar_3/'
     dataset_train_3 = MyDataset(txt=root_radar_3 + 'train_1_m7.txt', transform=data_transform)
-    # dataset_test_3 = MyDataset(txt=root_radar_3 + 'test_1.txt', transform=data_transform)
 
     dataset_train_4 = MyDataset(txt=root_radar_1 + 'train_2_m7.txt', transform=data_transform)
-    # dataset_test_4 = MyDataset(txt=root_radar_1 + 'test_2.txt', transform=data_transform)
 
     dataset_train_5 = MyDataset(txt=root_radar_2 + 'train_2_m7.txt', transform=data_transform)
-    # dataset_test_5 = MyDataset(txt=root_radar_2 + 'test_2.txt', transform=data_transform)
 
     dataset_train_6 = MyDataset(txt=root_radar_3 + 'train_2_m7.txt', transform=data_transform)
-    # dataset_test_6 = MyDataset(txt=root_radar_3 + 'test_3.txt', transform=data_transform)
 
     dataset_test = MyDataset(txt='./data/spect/THREE_RADAR_3000/' + 'test_m7.txt', transform=data_transform)
     dataset_train = [dataset_train_1, dataset_train_2, dataset_train_3, dataset_train_4, dataset_train_5,
                      dataset_train_6]
+
+    if args.num_users == 10:
+        dataset_train_7 = MyDataset(txt=root_radar_1 + 'train_1_m7.txt', transform=data_transform)
+
+        dataset_train_8 = MyDataset(txt=root_radar_2 + 'train_1_m7.txt', transform=data_transform)
+
+        dataset_train_9 = MyDataset(txt=root_radar_3 + 'train_1_m7.txt', transform=data_transform)
+
+        dataset_train_10 = MyDataset(txt=root_radar_1 + 'train_2_m7.txt', transform=data_transform)
+
+        # dataset_train_11 = MyDataset(txt=root_radar_2 + 'train_2_m7.txt', transform=data_transform)
+        #
+        # dataset_train_12 = MyDataset(txt=root_radar_3 + 'train_2_m7.txt', transform=data_transform)
+        dataset_train.extend([dataset_train_7, dataset_train_8, dataset_train_9, dataset_train_10])
 
     img_size = dataset_train_1[0][0].shape
     print(img_size)
@@ -152,7 +160,8 @@ def main_fed_online_CV(dist, large_scale_fading, beta_3, beta_4):
     lambda_list = np.zeros(args.c_rounds)
     D[0] = int(D_star(0))  # D[0] is D^1.
     sensing_datasize = 0
-    Q_level = 15
+    Q_level = 3
+    logger.info('number of Q_level: {}'.format(Q_level))
 
     power_control = 'adaptive'
 
@@ -160,10 +169,11 @@ def main_fed_online_CV(dist, large_scale_fading, beta_3, beta_4):
     aggregate_type = "digital"
 
     # datasize_type = "non-acc equal"
-    datasize_type = "acc equal"
-    # datasize_type = "dynamic"
+    # datasize_type = "acc equal"
+    datasize_type = "dynamic"
 
     logger.info(f'power_control:{power_control}, aggregate_type:{aggregate_type}, datasize_type: {datasize_type}')
+    # logger.info('number of users: {}'.format(args.num_users))
     for tmp_round in range(args.c_rounds):
         if datasize_type == "non-acc equal":
             sensing_datasize = int(100 * S_star / (args.c_rounds * args.num_users))

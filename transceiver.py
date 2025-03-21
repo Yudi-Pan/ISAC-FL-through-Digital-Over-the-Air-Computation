@@ -1,6 +1,7 @@
 import numpy as np
 import torch
 
+
 # def phi(x, gamma_r):
 #     # 计算 x 属于哪个量化区间 ell
 #     ell = np.floor(x * gamma_r).astype(int)
@@ -19,6 +20,7 @@ def phi(x, gamma_r):
     result = torch.where(decision, torch.min(ell + 1, gamma_r), ell)
 
     return result
+
 
 def QAM(data, Q_level, v_min, v_max):
     # 标准化
@@ -78,7 +80,16 @@ def receiver(y, Q_level, K, lambda_r, v_min, v_max, flag=False):
     constellation = (real_part + 1j * imag_part).flatten()
 
     # 切割 y 成小的子张量，每个子张量大小为 batch_size
-    batch_size = 50000  # 可以根据显存大小和计算性能调整
+    # 可以根据显存大小和计算性能调整
+    if Q_level * K >= 150:
+        batch_size = 20000
+    elif Q_level * K >= 90:
+        batch_size = 40000
+    elif Q_level * K >= 42:
+        batch_size = 120000
+    else:
+        batch_size = 240000
+
     num_batches = (len(y) + batch_size - 1) // batch_size  # 向上取整
     batches = [y[i * batch_size:(i + 1) * batch_size] for i in range(num_batches)]
 
@@ -113,7 +124,7 @@ def receiver(y, Q_level, K, lambda_r, v_min, v_max, flag=False):
     # sum_v_q = K * v_min + (v_max - v_min) / Q_level * sum_x_q
     v_tilde = K * v_min + (v_max - v_min) / 2 * (real_arr + K)
     # 在函数结束时手动释放不再需要的显存
-    torch.cuda.empty_cache()
+    # torch.cuda.empty_cache()
 
     return v_tilde
 
